@@ -34,3 +34,19 @@ jobs:
           name: file
       - name: Display file contents
         run: cat file.txt
+
+  download_logs:
+    name: Get Workflow Run Logs
+    runs-on: ubuntu-latest
+    needs: [job_1, job_2]
+    steps:
+      - name: Get Workflow Logs
+        run: |
+          curl -H "Accept: application/vnd.github+json" \
+               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+               -L "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/logs" \
+               --output workflow_logs.zip
+      - name: Extract Logs
+        run: unzip workflow_logs.zip -d logs
+      - name: Display Log Files
+        run: ls -R logs
