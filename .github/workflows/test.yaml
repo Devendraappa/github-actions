@@ -46,7 +46,16 @@ jobs:
                -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                -L "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/logs" \
                --output workflow_logs.zip
+      - name: Check if log file exists
+        run: |
+          if [ ! -f workflow_logs.zip ]; then
+            echo "Log file not found!";
+            exit 1;
+          fi
+          echo "Log file downloaded successfully."
       - name: Extract Logs
-        run: unzip workflow_logs.zip -d logs
+        run: |
+          echo "Attempting to unzip workflow_logs.zip"
+          unzip -v workflow_logs.zip
       - name: Display Log Files
         run: ls -R logs
